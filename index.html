@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Report System</title>
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #f3f4f6;
+            --text-color: #1f2937;
+            --light-text: #6b7280;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f9fafb;
+            color: var(--text-color);
+        }
+        
+        .container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid var(--border-color);
+            padding: 1.5rem;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--primary-color);
+            border-radius: 8px;
+            margin-right: 0.75rem;
+        }
+        
+        .logo-text {
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+        
+        .menu {
+            list-style: none;
+        }
+        
+        .menu-item {
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: background-color 0.2s;
+        }
+        
+        .menu-item:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .menu-item.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .menu-icon {
+            margin-right: 0.75rem;
+            width: 20px;
+            height: 20px;
+        }
+        
+        /* Main Content */
+        .main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            margin-right: 0.75rem;
+        }
+        
+        /* Dashboard Stats */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background-color: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .stat-title {
+            color: var(--light-text);
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        
+        .trend-up {
+            color: var(--success-color);
+        }
+        
+        .trend-down {
+            color: var(--danger-color);
+        }
+        
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-group {
+            display: flex;
+        }
+        
+        .filter-button {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .filter-button:first-child {
+            border-top-left-radius: 0.5rem;
+            border-bottom-left-radius: 0.5rem;
+        }
+        
+        .filter-button:last-child {
+            border-top-right-radius: 0.5rem;
+            border-bottom-right-radius: 0.5rem;
+        }
+        
+        .filter-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        .search-box {
+            flex: 1;
+            display: flex;
+            max-width: 300px;
+        }
+        
+        .search-input {
+            flex: 1;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+        }
+        
+        .export-button {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+        
+        /* Tables */
+        .table-container {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        thead {
+            background-color: var(--secondary-color);
+        }
+        
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-weight: 600;
+            color: var(--light-text);
+            font-size: 0.875rem;
+        }
+        
+        td {
+            padding: 1rem;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        tr:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .status-paid {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+        }
+        
+        .status-pending {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+        
+        .status-overdue {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+        
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        
+        .page-button {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.5rem;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+        }
+        
+        .page-button.active {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+        
+        /* Charts */
+        .chart-container {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .chart-title {
+            font-weight: 600;
+        }
+        
+        .chart-legend {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.875rem;
+        }
+        
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 2px;
+            margin-right: 0.5rem;
+        }
+        
+        .chart-placeholder {
+            height: 250px;
+            background-color: var(--secondary-color);
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--light-text);
+        }
+        
+        /* Customer Details Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            border-radius: 0.75rem;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .modal-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--light-text);
+        }
+        
+        .modal-body {
+            padding: 1.5rem;
+        }
+        
+        .customer-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .info-group {
+            margin-bottom: 1rem;
+        }
+        
+        .info-label {
+            font-size: 0.875rem;
+            color: var(--light-text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .info-value {
+            font-weight: 500;
+        }
+        
+        .payment-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-item {
+            background-color: var(--secondary-color);
+            padding: 1rem;
+            border-radius: 0.5rem;
+        }
+        
+        .summary-label {
+            font-size: 0.875rem;
+            color: var(--light-text);
+            margin-bottom: 0.25rem;
+        }
+        
+        .summary-value {
+            font-weight: 600;
+            font-size: 1.25rem;
+        }
+        
+        .action-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            margin-right: 1rem;
+        }
+        
+        .secondary-button {
+            background-color: white;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-weight: 500;
+            cursor: pointer;
+        }
+        
+        /* Customer Search */
+        .advanced-search {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .search-title {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .search-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--light-text);
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            background-color: white;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab {
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 500;
+            position: relative;
+        }
+        
+        .tab.active {
+            color: var(--primary-color);
+        }
+        
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <div class="logo-icon"></div>
+                <div class="logo-text">PayReports</div>
+            </div>
+            
+            <ul class="menu">
+                <li class="menu-item active">
+                    <div class="menu-icon">📊</div>
+                    Dashboard
+                </li>
+                <li class="menu-item">
+                    <div class="menu-icon">💰</div>
+                    Payments
+                </li>
+                <li class="menu-item">
+                    <div class="menu-icon">👥</div>
+                    Customers
+                </li>
+                <li class="menu-item">
+                    <div class="menu-icon">📄</div>
+                    Invoices
+                </li>
+                <li class="menu-item">
+                    <div class="menu-icon">📈</div>
+                    Reports
+                </li>
+                <li class="menu-item">
+                    <div class="menu-icon">⚙️</div>
+                    Settings
+                </li>
+            </ul>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="main">
+            <header class="header">
+                <h1 class="page-title">Payment Reports</h1>
+                
+                <div class="user-profile">
+                    <div class="user-avatar"></div>
+                    <div class="user-name">Admin User</div>
+                </div>
+            </header>
+            
+
+
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-title">TOTAL REVENUE</div>
+                    <div class="stat-value">NPR 12,456,300</div>
+                    <div class="stat-trend trend-up">+12% from last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">PENDING PAYMENTS</div>
+                    <div class="stat-value">NPR 2,842,500</div>
+                    <div class="stat-trend trend-down">-3% from last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">PAID INVOICES</div>
+                    <div class="stat-value">843</div>
+                    <div class="stat-trend trend-up">+5% from last month</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-title">OVERDUE PAYMENTS</div>
+                    <div class="stat-value">NPR 1,234,500</div>
+                    <div class="stat-trend trend-down">-8% from last month</div>
+                </div>
+            </div>
+            
+            <!-- Customer Search Section -->
+            <h2 style="margin-bottom: 1rem;">Customer Payment Search</h2>
+            
+            <div class="advanced-search">
+                <div class="search-title">Find Customers with Due Payments</div>
+                <div class="search-form">
+                    <div class="form-group">
+                        <label class="form-label">Customer Name</label>
+                        <input type="text" class="form-input" placeholder="Enter customer name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Payment Status</label>
+                        <select class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="overdue">Overdue</option>
+                            <option value="partial">Partially Paid</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Minimum Due Amount</label>
+                        <input type="number" class="form-input" placeholder="NPR">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Invoice Date Range</label>
+                        <select class="form-select">
+                            <option value="all">All Time</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-actions">
+                    <button class="secondary-button">Reset</button>
+                    <button class="action-button">Search</button>
+                </div>
+            </div>
+            
+            <!-- Payment Trends Chart -->
+            <div class="chart-container">
+                <div class="chart-header">
+                    <div class="chart-title">Payment Trends</div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #2563eb;"></div>
+                            Received
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #f59e0b;"></div>
+                            Pending
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ef4444;"></div>
+                            Overdue
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-placeholder">
+                    Payment Trend Chart
+                </div>
+            </div>
+            
+            <!-- Customer Payments -->
+            <h2 style="margin-bottom: 1rem;">Customer Payments</h2>
+            
+            <div class="filter-controls">
+                <div class="filter-group">
+                    <button class="filter-button active">All</button>
+                    <button class="filter-button">Paid</button>
+                    <button class="filter-button">Pending</button>
+                    <button class="filter-button">Overdue</button>
+                </div>
+                
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="Search customer name...">
+                </div>
+                
+                <button class="export-button">Export CSV</button>
+            </div>
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Customer ID</th>
+                            <th>Customer Name</th>
+                            <th>Total Invoiced</th>
+                            <th>Total Paid</th>
+                            <th>Due Amount</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>CUST-001</td>
+                            <td>Acme Corporation</td>
+                            <td>NPR 542,500</td>
+                            <td>NPR 342,500</td>
+                            <td>NPR 200,000</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-001')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>CUST-002</td>
+                            <td>Globex Industries</td>
+                            <td>NPR 824,500</td>
+                            <td>NPR 824,500</td>
+                            <td>NPR 0</td>
+                            <td><span class="status-badge status-paid">Paid</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-002')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>CUST-003</td>
+                            <td>Stark Enterprises</td>
+                            <td>NPR 1,875,000</td>
+                            <td>NPR 875,000</td>
+                            <td>NPR 1,000,000</td>
+                            <td><span class="status-badge status-overdue">Overdue</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-003')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>CUST-004</td>
+                            <td>Wayne Industries</td>
+                            <td>NPR 365,000</td>
+                            <td>NPR 165,000</td>
+                            <td>NPR 200,000</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-004')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>CUST-005</td>
+                            <td>Oscorp Technologies</td>
+                            <td>NPR 567,000</td>
+                            <td>NPR 567,000</td>
+                            <td>NPR 0</td>
+                            <td><span class="status-badge status-paid">Paid</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-005')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>CUST-006</td>
+                            <td>Initech Solutions</td>
+                            <td>NPR 945,000</td>
+                            <td>NPR 400,000</td>
+                            <td>NPR 545,000</td>
+                            <td><span class="status-badge status-overdue">Overdue</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-006')">View Details</button></td>
+                        </tr>
+                        <tr>
+                            <td>CUST-007</td>
+                            <td>Umbrella Corp</td>
+                            <td>NPR 675,000</td>
+                            <td>NPR 475,000</td>
+                            <td>NPR 200,000</td>
+                            <td><span class="status-badge status-pending">Pending</span></td>
+                            <td><button class="secondary-button" onclick="showCustomerDetails('CUST-007')">View Details</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="pagination">
+                <button class="page-button">«</button>
+                <button class="page-button active">1</button>
+                <button class="page-button">2</button>
+                <button class="page-button">3</button>
+                <button class="page-button">»</button>
+            </div>
+            
+            <!-- Customer Payment Distribution -->
+            <h2 style="margin-bottom: 1rem; margin-top: 2rem;">Customer Payment Distribution</h2>
+            
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    Customer Payment Distribution Chart
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Customer Details Modal -->
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Customer Details</h2>
+                <button class="modal-close" onclick="closeCustomerDetails()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('info')">Customer Information</div>
+                    <div class="tab" onclick="switchTab('invoices')">Invoices</div>
+                    <div class="tab" onclick="switchTab('payments')">Payment History</div>
+                </div>
+                
+                <div id="info-tab" class="tab-content active">
+                    <div class="customer-info">
+                        <div>
+                            <div class="info-group">
+                                <div class="info-label">Customer ID</div>
+                                <div class="info-value">CUST-001</div>
+                            </div>
+                            <div class="info-group">
+                                <div class="info-label">Customer Name</div>
+                                <div class="info-value">Acme Corporation</div>
+                            </div>
+                            <div class="info-group">
+                                <div class="info-label">Contact Person</div>
+                                <div class="info-value">John Smith</div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="info-group">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">john.smith@acme.com</div>
+                            </div>
+                            <div class="info-group">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">+977 9801234567</div>
+                            </div>
+                            <div class="info-group">
+                                <div class="info-label">Address</div>
+                                <div class="info-value">123 Business St, Kathmandu</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="margin-bottom: 1rem;">Payment Summary</h3>
+                    <div class="payment-summary">
+                        <div class="summary-item">
+                            <div class="summary-label">TOTAL INVOICED</div>
+                            <div class="summary-value">NPR 542,500</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">TOTAL PAID</div>
+                            <div class="summary-value">NPR 342,500</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">TOTAL DUE</div>
+                            <div class="summary-value">NPR 200,000</div>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 2rem;">
+                        <button class="action-button">Send Payment Reminder</button>
+                        <button class="secondary-button">Generate Statement</button>
+                    </div>
+                </div>
+                
+                <div id="invo
+                <!-- Here are the missing closing tags and elements that need to be added at the end of the HTML file -->
+
+                <div id="invoices-tab" class="tab-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Invoice #</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Due Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>INV-2023-001</td>
+                                    <td>Jan 15, 2023</td>
+                                    <td>NPR 200,000</td>
+                                    <td><span class="status-badge status-paid">Paid</span></td>
+                                    <td>Feb 15, 2023</td>
+                                </tr>
+                                <tr>
+                                    <td>INV-2023-042</td>
+                                    <td>Feb 20, 2023</td>
+                                    <td>NPR 142,500</td>
+                                    <td><span class="status-badge status-paid">Paid</span></td>
+                                    <td>Mar 20, 2023</td>
+                                </tr>
+                                <tr>
+                                    <td>INV-2023-078</td>
+                                    <td>Mar 10, 2023</td>
+                                    <td>NPR 200,000</td>
+                                    <td><span class="status-badge status-pending">Pending</span></td>
+                                    <td>Apr 10, 2023</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div id="payments-tab" class="tab-content">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Payment #</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Method</th>
+                                    <th>Invoice #</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>PMT-2023-001</td>
+                                    <td>Feb 10, 2023</td>
+                                    <td>NPR 200,000</td>
+                                    <td>Bank Transfer</td>
+                                    <td>INV-2023-001</td>
+                                </tr>
+                                <tr>
+                                    <td>PMT-2023-042</td>
+                                    <td>Mar 15, 2023</td>
+                                    <td>NPR 142,500</td>
+                                    <td>Credit Card</td>
+                                    <td>INV-2023-042</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // The JavaScript code can be placed here or linked from an external file
+    </script>
+    <script src="payment-system.js"></script>
+</body>
+</html>
